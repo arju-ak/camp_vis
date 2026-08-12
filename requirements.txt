@@ -7,4 +7,7 @@ flask-socketio>=5.3
 numpy>=1.24,<2.0
 Pillow>=10.0
 gradio>=5.0.0
+fastapi
+uvicorn
+a2wsgi
 huggingface_hub>=0.25.0
