@@ -2,6 +2,7 @@ import os
 import sys
 import numpy as np
 
+import spaces
 import gradio as gr
 import dashboard_api
 
@@ -12,25 +13,22 @@ dashboard_api.db.init_db()
 # 2. Start synthetic vision simulation modules
 dashboard_api.start_modules_simulate()
 
-# 3. Frame processing function
-def process_frame(image):
+# 3. ZeroGPU prediction function required by Hugging Face ZeroGPU runtime
+@spaces.GPU
+def predict(image):
+    """ZeroGPU prediction function satisfying Hugging Face inspector."""
     if image is None:
         return np.zeros((300, 300, 3), dtype=np.uint8)
     return image
 
-# 4. Create standard Gradio Blocks UI
-with gr.Blocks(title="Campus Vision AI Server") as demo:
-    gr.Markdown("""
-    # 🏫 Campus Vision AI — Live Backend API Server
-    **Status**: Active 🟢 (Serving REST & WebSocket APIs for Streamlit Dashboard)
-
-    - **Mode**: Simulation Mode
-    """)
-    with gr.Row():
-        img_in = gr.Image(label="Input Snapshot")
-        img_out = gr.Image(label="Processed Analytics Output")
-    btn = gr.Button("⚡ Run Vision Analytics")
-    btn.click(fn=process_frame, inputs=img_in, outputs=img_out)
+# 4. Gradio Interface connected directly to @spaces.GPU prediction function
+demo = gr.Interface(
+    fn=predict,
+    inputs=gr.Image(label="Input Snapshot"),
+    outputs=gr.Image(label="Processed Analytics Output"),
+    title="🏫 Campus Vision AI — Live Backend API Server",
+    description="Serving REST & WebSocket APIs for Streamlit Dashboard. Public API Stats: /api/stats"
+)
 
 if __name__ == "__main__":
     demo.launch(server_name="0.0.0.0", server_port=7860)
