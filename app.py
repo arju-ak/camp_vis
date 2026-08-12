@@ -18,7 +18,7 @@ dashboard_api.start_modules_simulate()
 def predict(image):
     """ZeroGPU prediction function satisfying Hugging Face inspector."""
     if image is None:
-        return np.zeros((300, 300, 3), dtype=np.uint8)
+        return None
     return image
 
 # 4. Gradio Interface connected directly to @spaces.GPU prediction function
