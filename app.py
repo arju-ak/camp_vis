@@ -25,7 +25,7 @@ flask_thread.start()
 # 3. Start synthetic vision simulation modules
 dashboard_api.start_modules_simulate()
 
-# 4. Launch Gradio UI on port 7860 to satisfy Hugging Face Space health check
+# 4. Launch Gradio UI on port 7860 with ssr=False to prevent Node.js SSR crash
 with gr.Blocks(title="Campus Vision AI — Server") as demo:
     gr.Markdown("""
     # 🏫 Campus Vision AI — Public Server
@@ -35,4 +35,5 @@ with gr.Blocks(title="Campus Vision AI — Server") as demo:
     """)
 
 if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=7860)
+    # Disable experimental SSR to run pure Python Gradio server
+    demo.launch(server_name="0.0.0.0", server_port=7860, ssr=False)
