@@ -1,24 +1,28 @@
 import os
-import subprocess
-import time
-import gradio as gr
+import sys
 
-# Start the Campus Vision AI Flask Backend in a background process
-print("Starting Campus Vision AI Flask Backend Server...")
-backend_process = subprocess.Popen([
-    "python", "dashboard_api.py", "--simulate", "--port", "7860", "--host", "0.0.0.0"
-])
-
-# Lightweight Gradio wrapper for Hugging Face Space hosting
-with gr.Blocks(title="Campus Vision AI — Backend API") as demo:
-    gr.Markdown("""
-    # 🏫 Campus Vision AI — Public Backend API
-    **Status**: Active 🟢 (Serving REST & WebSocket APIs for Streamlit Dashboard)
-
-    - **API Stats Endpoint**: `/api/stats`
-    - **Mode**: Simulation Mode (24/7 AI Surveillance Feed)
-    """)
+# Import dashboard_api directly and run Flask on Hugging Face port 7860
+import dashboard_api
 
 if __name__ == "__main__":
-    # Gradio launches on Hugging Face Space port 7860
-    demo.launch(server_name="0.0.0.0", server_port=7860)
+    print("=" * 60)
+    print("  CAMPUS VISION AI — HUGGING FACE BACKEND SERVER")
+    print("=" * 60)
+    
+    # Enable simulation mode for 24/7 cloud hosting
+    dashboard_api.SIMULATE = True
+    
+    # Initialize database
+    dashboard_api.db.init_db()
+    
+    # Start synthetic vision simulation modules
+    dashboard_api.start_modules_simulate()
+    
+    # Run Flask + SocketIO app directly on Hugging Face default port 7860
+    dashboard_api.socketio.run(
+        dashboard_api.app, 
+        host="0.0.0.0", 
+        port=7860, 
+        debug=False, 
+        allow_unsafe_werkzeug=True
+    )
