@@ -1,4 +1,4 @@
-opencv-python>=4.8
+opencv-python-headless>=4.8
 mediapipe>=0.10
 ultralytics>=8.0
 flask>=3.0
@@ -6,4 +6,5 @@ flask-cors>=4.0
 flask-socketio>=5.3
 numpy>=1.24,<2.0
 Pillow>=10.0
-gradio
+gradio>=5.0.0
+huggingface_hub>=0.25.0
