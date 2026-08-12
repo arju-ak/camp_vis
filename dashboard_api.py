@@ -55,6 +55,7 @@ def serve_dashboard():
     return send_from_directory("frontend", "index.html")
 
 
+@app.route("/stats")
 @app.route("/api/stats")
 def api_stats():
     """Aggregate dashboard statistics."""

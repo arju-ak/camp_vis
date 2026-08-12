@@ -2,8 +2,9 @@ import os
 import sys
 import numpy as np
 
-import gradio as gr
+from fastapi import FastAPI
 from fastapi.middleware.wsgi import WSGIMiddleware
+import gradio as gr
 
 import dashboard_api
 
@@ -14,16 +15,21 @@ dashboard_api.db.init_db()
 # 2. Start simulation modules
 dashboard_api.start_modules_simulate()
 
-# 3. Prediction function
+# 3. Create root FastAPI application
+app = FastAPI(title="Campus Vision AI Server")
+
+# 4. Mount Flask WSGI app at /api
+app.mount("/api", WSGIMiddleware(dashboard_api.app))
+
+# 5. Create Gradio UI
 def predict(image):
     if image is None:
         return np.zeros((300, 300, 3), dtype=np.uint8)
     return image
 
-# 4. Create Gradio Blocks UI
 with gr.Blocks(title="Campus Vision AI Server") as demo:
     gr.Markdown("""
-    # 🏫 Campus Vision AI — Live Backend API
+    # 🏫 Campus Vision AI — Live Backend Server
     **Status**: Active 🟢 (Serving REST & WebSocket APIs for Streamlit Dashboard)
 
     - **API Stats Endpoint**: [/api/stats](/api/stats)
@@ -35,8 +41,5 @@ with gr.Blocks(title="Campus Vision AI Server") as demo:
     btn = gr.Button("⚡ Run Vision Analytics")
     btn.click(fn=predict, inputs=img_in, outputs=img_out)
 
-# 5. Mount Flask app to Gradio's FastAPI app under /api
-demo.app.mount("/api", WSGIMiddleware(dashboard_api.app))
-
-if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=7860)
+# 6. Mount Gradio interface under /
+app = gr.mount_gradio_app(app, demo, path="/")
