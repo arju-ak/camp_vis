@@ -2,8 +2,9 @@ import os
 import sys
 import numpy as np
 
-import gradio as gr
+from fastapi import FastAPI
 from fastapi.middleware.wsgi import WSGIMiddleware
+import gradio as gr
 
 import dashboard_api
 
@@ -29,8 +30,11 @@ demo = gr.Interface(
     description="Serving REST & WebSocket APIs for Streamlit Dashboard. Public API Stats: /api/stats"
 )
 
-# 5. Mount Flask app to Gradio's FastAPI backend under /api
-demo.app.mount("/api", WSGIMiddleware(dashboard_api.app))
+# 5. Create FastAPI app
+app = FastAPI(title="Campus Vision AI Server")
 
-if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=7860)
+# 6. Mount Flask app under /api
+app.mount("/api", WSGIMiddleware(dashboard_api.app))
+
+# 7. Mount Gradio interface under /
+app = gr.mount_gradio_app(app, demo, path="/")
