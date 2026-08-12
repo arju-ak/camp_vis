@@ -522,14 +522,16 @@
         };
 
         const getApiEndpoints = () => {
-            const ports = [window.location.port, '5000'];
-            const hosts = [window.location.hostname || 'localhost', '127.0.0.1', 'localhost'];
             const endpoints = [];
+            if (window.CUSTOM_API_BASE) {
+                endpoints.push(window.CUSTOM_API_BASE);
+            }
             
             // Try relative path first if served from Flask
             if (window.location.port === '5000') endpoints.push('');
 
             // Try explicit host/port combinations
+            const hosts = [window.location.hostname || 'localhost', '127.0.0.1', 'localhost'];
             for (const h of hosts) {
                 endpoints.push(`http://${h}:5000`);
             }
