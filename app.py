@@ -3,16 +3,15 @@ import sys
 import threading
 import numpy as np
 
-# Import spaces for Hugging Face ZeroGPU inspector with fallback mock
+# Safe ZeroGPU decorator fallback
 try:
     import spaces
-except ImportError:
-    class spaces:
-        @staticmethod
-        def GPU(func=None, duration=None):
-            if func is None:
-                return lambda f: f
-            return func
+    gpu_decorator = spaces.GPU
+except Exception:
+    def gpu_decorator(func=None, **kwargs):
+        if func is None:
+            return lambda f: f
+        return func
 
 import gradio as gr
 import dashboard_api
@@ -37,15 +36,15 @@ flask_thread.start()
 # 3. Start synthetic vision simulation modules
 dashboard_api.start_modules_simulate()
 
-# 4. ZeroGPU prediction function for Hugging Face inspector
-@spaces.GPU
+# 4. ZeroGPU prediction function using safe decorator
+@gpu_decorator
 def predict(image):
-    """ZeroGPU prediction function satisfying Hugging Face inspector."""
+    """Prediction function with safe ZeroGPU compatibility."""
     if image is None:
         return np.zeros((300, 300, 3), dtype=np.uint8)
     return image
 
-# 5. Build Gradio UI calling predict function
+# 5. Build Gradio UI
 with gr.Blocks(title="Campus Vision AI — Public Server") as demo:
     gr.Markdown("""
     # 🏫 Campus Vision AI — Live Backend Server
@@ -60,5 +59,4 @@ with gr.Blocks(title="Campus Vision AI — Public Server") as demo:
     btn.click(fn=predict, inputs=img_input, outputs=img_output)
 
 if __name__ == "__main__":
-    # Launch Gradio interface with queue enabled for ZeroGPU compatibility
     demo.queue().launch(server_name="0.0.0.0", server_port=7860)
