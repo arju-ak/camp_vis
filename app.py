@@ -1,15 +1,6 @@
 import os
 import sys
 
-# Optional Hugging Face ZeroGPU parser compatibility
-try:
-    import spaces
-    @spaces.GPU
-    def _hf_dummy_gpu_check():
-        return True
-except Exception:
-    pass
-
 import dashboard_api
 
 if __name__ == "__main__":
