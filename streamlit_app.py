@@ -13,21 +13,13 @@ except Exception as e:
     st.error(f"Could not load frontend HTML: {e}")
     html_content = ""
 
-st.sidebar.markdown("# 🌐 Backend Public URL Config")
+st.sidebar.markdown("# 🌐 Backend Public Server")
+default_api = "https://arju-ak-camp-vis.hf.space"
 backend_url = st.sidebar.text_input(
-    "Flask API URL", 
-    value=st.query_params.get("api", "http://localhost:5000"),
-    help="Enter your ngrok or localtunnel HTTPS URL (e.g., https://xxx.ngrok-free.app or https://xxx.loca.lt)"
+    "Flask API Server URL", 
+    value=st.query_params.get("api", default_api),
+    help="Default is set to your free Hugging Face Space backend (https://arju-ak-camp-vis.hf.space)"
 )
-
-st.sidebar.info("""
-### 🚀 How to Share over Internet:
-1. Keep `python dashboard_api.py` running on your laptop.
-2. In terminal, run a public tunnel:
-   - **localtunnel**: `npx localtunnel --port 5000`
-   - **ngrok**: `ngrok http 5000`
-3. Paste the generated public `https://...` URL into the box above!
-""")
 
 # Inject the chosen API URL into HTML content
 if html_content and backend_url:

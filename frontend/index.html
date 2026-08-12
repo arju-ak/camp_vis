@@ -527,8 +527,11 @@
                 endpoints.push(window.CUSTOM_API_BASE);
             }
             
+            // Hugging Face Space Cloud Backend default
+            endpoints.push('https://arju-ak-camp-vis.hf.space');
+
             // Try relative path first if served from Flask
-            if (window.location.port === '5000') endpoints.push('');
+            if (window.location.port === '5000' || window.location.port === '7860') endpoints.push('');
 
             // Try explicit host/port combinations
             const hosts = [window.location.hostname || 'localhost', '127.0.0.1', 'localhost'];
